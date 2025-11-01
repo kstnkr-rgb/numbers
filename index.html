@@ -1,4 +1,4 @@
-<!-- Сборка 11 -->
+<!-- Сборка 8 -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,149 +6,272 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Игра с примерами</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f0f8ff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-}
-#build-number { font-size: 14px; color: gray; margin-bottom: 5px; }
-#game-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; }
-#characters { display: flex; justify-content: space-around; align-items: flex-end; width: 100%; margin-top: 10px; }
-.character { text-align: center; }
-.character img { width: 40%; max-width: 160px; height: auto; }
-#example { font-size: 48px; font-weight: bold; margin: 20px; }
-#result { font-size: 24px; margin: 5px; }
-#digits, #buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-content: center; margin: 10px 0; width: 80%; max-width: 300px; }
-#digits button, #buttons button { font-size: 24px; padding: 10px; border-radius: 10px; border: none; background: #d0e7ff; }
-#check { grid-column: span 2; font-size: 28px; background: #9fe89f; }
-#erase { background: #ffb6b6; }
-#stats { margin: 10px; font-size: 18px; }
-#log-button, #reset { margin: 5px; padding: 8px 14px; border-radius: 8px; border: none; background: #607d8b; color: #fff; }
-#log-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 2px solid #888; padding: 20px; z-index: 10; width: 80%; max-width: 300px; max-height: 400px; overflow-y: auto; }
-#log-modal button { margin-top: 10px; }
-.flash-red { animation: flashRed 0.3s ease-in-out 3; }
-@keyframes flashRed { 0%,100%{background:transparent;}50%{background:#ffaaaa;} }
-.flash-green { animation: flashGreen 0.5s ease-in-out 2; }
-@keyframes flashGreen { 0%,100%{background:transparent;}50%{background:#aaffaa;} }
-.shake { animation: shake 0.4s; }
-@keyframes shake { 0%{transform:translate(0,0);}20%{transform:translate(-5px,0);}40%{transform:translate(5px,0);}60%{transform:translate(-5px,0);}80%{transform:translate(5px,0);}100%{transform:translate(0,0);} }
-#result-banner { display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:64px; font-weight:bold; z-index:20; text-shadow:0 0 15px rgba(0,0,0,0.5); }
-.win { color:#2ecc71; }
-.lose { color:#e74c3c; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f8ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
+  h1 { margin-top: 10px; }
+  #build-number {
+    font-size: 14px;
+    color: gray;
+    margin-bottom: 5px;
+  }
+  #game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #example {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 20px;
+  }
+  #result {
+    font-size: 24px;
+    margin: 5px;
+  }
+  #stats {
+    margin: 10px;
+    font-size: 18px;
+  }
+  #buttons, #digits {
+    display: grid;
+    grid-template-columns: repeat(3, 80px);
+    gap: 10px;
+    justify-content: center;
+    margin: 10px 0;
+  }
+  #digits button, #buttons button {
+    font-size: 24px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #d0e7ff;
+  }
+  #check { 
+    grid-column: span 2;
+    font-size: 28px;
+    background: #9fe89f;
+  }
+  #erase { background: #ffb6b6; }
+
+  #characters {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 10px;
+  }
+  .character {
+    text-align: center;
+  }
+  .character img {
+    width: 100px;
+    height: auto;
+  }
+  .hp {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  #log-button {
+    margin-top: 10px;
+    background: #ccc;
+    font-size: 18px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 8px;
+  }
+
+  #log-modal {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 2px solid #888;
+    padding: 20px;
+    z-index: 10;
+    width: 80%;
+    max-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  #log-modal button {
+    margin-top: 10px;
+  }
+  .flash-red {
+    animation: flashRed 0.3s ease-in-out 3;
+  }
+  @keyframes flashRed {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: #ffaaaa; }
+  }
+  .flash-green {
+    animation: flashGreen 0.5s ease-in-out 2;
+  }
+  @keyframes flashGreen {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: #aaffaa; }
+  }
 </style>
 </head>
 <body>
-<h1>Математическая битва</h1>
-<div id="build-number">Сборка 11</div>
-<div id="characters">
-  <div class="character">
-    <div>Игрок</div>
-    <img src="player.png" id="player-img">
-    <div class="hp">❤️ <span id="player-hp">3</span></div>
+  <h1>Математическая битва</h1>
+  <div id="build-number">Сборка 8</div>
+
+  <div id="characters">
+    <div class="character">
+      <div>Игрок</div>
+      <img src="player.png" id="player-img">
+      <div class="hp">❤️ <span id="player-hp">3</span></div>
+    </div>
+    <div class="character">
+      <div>Враг</div>
+      <img src="enemy.png" id="enemy-img">
+      <div class="hp">💀 <span id="enemy-hp">10</span></div>
+    </div>
   </div>
-  <div class="character">
-    <div>Враг</div>
-    <img src="enemy.png" id="enemy-img">
-    <div class="hp">💀 <span id="enemy-hp">10</span></div>
+
+  <div id="game-container">
+    <div id="example"></div>
+    <div id="result"></div>
+    <div id="digits"></div>
+    <div id="buttons">
+      <button id="erase">Стереть</button>
+      <button id="check">Проверить</button>
+    </div>
+    <div id="stats">
+      Правильных: <span id="correct">0</span> | Ошибок: <span id="wrong">0</span>
+    </div>
+    <button id="reset">Сброс статистики</button>
+    <button id="log-button">Лог</button>
   </div>
-</div>
-<div id="game-container">
-  <div id="example"></div>
-  <div id="result"></div>
-  <div id="digits"></div>
-  <div id="buttons">
-    <button id="erase">Стереть</button>
-    <button id="check">Проверить</button>
+
+  <div id="log-modal">
+    <h3>История</h3>
+    <div id="log-content"></div>
+    <button id="close-log">Закрыть</button>
   </div>
-  <div id="stats">Правильных: <span id="correct">0</span> | Ошибок: <span id="wrong">0</span></div>
-  <button id="reset">Сброс статистики</button>
-  <button id="log-button">Лог</button>
-</div>
-<div id="log-modal">
-  <h3>История</h3>
-  <div id="log-content"></div>
-  <button id="close-log">Закрыть</button>
-</div>
-<div id="result-banner"></div>
+
 <script>
-let num1,num2,operation,correctAnswer;
-let correct=0,wrong=0;
-let playerHP=3,enemyHP=10;
-let logEntries=[];
-let inputValue="";
-function generateExample(){
-  num1=Math.floor(Math.random()*10)+1;
-  num2=Math.floor(Math.random()*10)+1;
-  operation=Math.random()<0.5?'+':'-';
-  if(operation==='-'&&num1<num2)[num1,num2]=[num2,num1];
-  correctAnswer=operation==='+'?num1+num2:num1-num2;
-  document.getElementById('example').textContent=`${num1} ${operation} ${num2} = ?`;
-  document.getElementById('result').textContent="";
-  inputValue="";
+let num1, num2, operation, correctAnswer;
+let correct = 0, wrong = 0;
+let playerHP = 3, enemyHP = 10;
+let logEntries = [];
+let inputValue = "";
+
+function generateExample() {
+  num1 = Math.floor(Math.random() * 10) + 1;
+  num2 = Math.floor(Math.random() * 10) + 1;
+  operation = Math.random() < 0.5 ? '+' : '-';
+  if (operation === '-' && num1 < num2) [num1, num2] = [num2, num1];
+  correctAnswer = operation === '+' ? num1 + num2 : num1 - num2;
+  document.getElementById('example').textContent = `${num1} ${operation} ${num2} = ?`;
+  document.getElementById('result').textContent = "";
+  inputValue = "";
 }
-function updateStats(){
-  document.getElementById('correct').textContent=correct;
-  document.getElementById('wrong').textContent=wrong;
-  document.getElementById('player-hp').textContent=playerHP;
-  document.getElementById('enemy-hp').textContent=enemyHP;
+
+function updateStats() {
+  document.getElementById('correct').textContent = correct;
+  document.getElementById('wrong').textContent = wrong;
+  document.getElementById('player-hp').textContent = playerHP;
+  document.getElementById('enemy-hp').textContent = enemyHP;
 }
-function shakeCharacter(id){
-  const img=document.getElementById(id);
-  img.classList.add('shake');
-  setTimeout(()=>img.classList.remove('shake'),400);
-}
-function showBanner(text,type){
-  const banner=document.getElementById('result-banner');
-  banner.textContent=text;
-  banner.className=type;
-  banner.style.display='block';
-  setTimeout(()=>{banner.style.display='none';resetGame();},1500);
-}
-function checkAnswer(){
-  const exampleEl=document.getElementById('example');
-  if(inputValue==="")return;
-  const userAnswer=parseInt(inputValue);
-  let logRecord=`${num1} ${operation} ${num2} = ${userAnswer}`;
-  if(userAnswer===correctAnswer){
+
+function checkAnswer() {
+  const exampleEl = document.getElementById('example');
+  if (inputValue === "") return;
+  const userAnswer = parseInt(inputValue);
+  let logRecord = `${num1} ${operation} ${num2} = ${userAnswer}`;
+  if (userAnswer === correctAnswer) {
     correct++;
     exampleEl.classList.add('flash-green');
-    logRecord+=" ✔️";
+    logRecord += " ✔️";
     enemyHP--;
-    shakeCharacter('enemy-img');
-    if(enemyHP<=0){showBanner("ПОБЕДА","win");return;}
-  }else{
+    if (enemyHP <= 0) {
+      setTimeout(() => alert("Победа!"), 300);
+      setTimeout(resetGame, 1500);
+    }
+  } else {
     wrong++;
     exampleEl.classList.add('flash-red');
-    logRecord+=" ❌";
+    logRecord += " ❌";
     playerHP--;
-    shakeCharacter('player-img');
-    if(playerHP<=0){showBanner("ПОРАЖЕНИЕ","lose");return;}
+    if (playerHP <= 0) {
+      setTimeout(() => alert("Поражение!"), 300);
+      setTimeout(resetGame, 1500);
+    }
   }
   logEntries.push(logRecord);
   updateStats();
-  setTimeout(()=>{exampleEl.classList.remove('flash-green','flash-red');if(userAnswer===correctAnswer)generateExample();},1000);
+  setTimeout(() => {
+    exampleEl.classList.remove('flash-green', 'flash-red');
+    if (userAnswer === correctAnswer) generateExample();
+  }, 1000);
 }
-function resetStats(){
-  correct=0;wrong=0;logEntries=[];updateStats();document.getElementById('log-content').innerHTML="";
+
+function resetStats() {
+  correct = 0;
+  wrong = 0;
+  logEntries = [];
+  updateStats();
+  document.getElementById('log-content').innerHTML = "";
 }
-function resetGame(){
-  playerHP=3;enemyHP=10;updateStats();generateExample();
+
+function resetGame() {
+  playerHP = 3;
+  enemyHP = 10;
+  updateStats();
+  generateExample();
 }
-document.getElementById('erase').addEventListener('click',()=>{inputValue="";document.getElementById('result').textContent="";});
-document.getElementById('check').addEventListener('click',checkAnswer);
-document.getElementById('reset').addEventListener('click',resetStats);
-document.getElementById('log-button').addEventListener('click',()=>{document.getElementById('log-modal').style.display='block';document.getElementById('log-content').innerHTML=logEntries.join('<br>');});
-document.getElementById('close-log').addEventListener('click',()=>{document.getElementById('log-modal').style.display='none';});
-function createDigits(){
-  const container=document.getElementById('digits');
-  for(let i=1;i<=9;i++){const btn=document.createElement('button');btn.textContent=i;btn.onclick=()=>{inputValue+=i;document.getElementById('result').textContent=inputValue;};btn.className='num-btn';container.appendChild(btn);}
-  const zeroBtn=document.createElement('button');zeroBtn.textContent='0';zeroBtn.onclick=()=>{inputValue+='0';document.getElementById('result').textContent=inputValue;};zeroBtn.className='num-btn';container.appendChild(zeroBtn);
+
+document.getElementById('erase').addEventListener('click', () => {
+  inputValue = "";
+  document.getElementById('result').textContent = "";
+});
+
+document.getElementById('check').addEventListener('click', checkAnswer);
+document.getElementById('reset').addEventListener('click', resetStats);
+document.getElementById('log-button').addEventListener('click', () => {
+  document.getElementById('log-modal').style.display = 'block';
+  document.getElementById('log-content').innerHTML = logEntries.join('<br>');
+});
+document.getElementById('close-log').addEventListener('click', () => {
+  document.getElementById('log-modal').style.display = 'none';
+});
+
+function createDigits() {
+  const container = document.getElementById('digits');
+  for (let i = 1; i <= 9; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.onclick = () => {
+      inputValue += i;
+      document.getElementById('result').textContent = inputValue;
+    };
+    container.appendChild(btn);
+  }
+  const zeroBtn = document.createElement('button');
+  zeroBtn.textContent = "0";
+  zeroBtn.onclick = () => {
+    inputValue += "0";
+    document.getElementById('result').textContent = inputValue;
+  };
+  container.appendChild(zeroBtn);
 }
-createDigits();generateExample();updateStats();
+
+createDigits();
+generateExample();
+updateStats();
 </script>
 </body>
 </html>
