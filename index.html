@@ -19,8 +19,15 @@ body {
 #game-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; }
 #characters { display: flex; justify-content: space-around; align-items: flex-end; width: 100%; margin-top: 10px; }
 .character { text-align: center; }
-#player-img { width: 40%; max-width: 160px; }
-#enemy-img { width: 50%; max-width: 200px; }
+#player-img {
+  height: 120px;
+  width: auto;
+}
+
+#enemy-img {
+  height: 180px;
+  width: auto;
+}
 #example { font-size: 48px; font-weight: bold; margin: 20px; }
 #result { font-size: 24px; margin: 5px; }
 #digits, #buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-content: center; margin: 10px 0; width: 80%; max-width: 300px; }
@@ -153,3 +160,4 @@ createDigits();generateExample();updateStats();
 </script>
 </body>
 </html>
+
