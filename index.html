@@ -1,4 +1,4 @@
-<!-- Сборка 14 -->
+<!-- Сборка 15 -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -37,18 +37,40 @@ body {
 @keyframes flashGreen { 0%,100%{background:transparent;}50%{background:#aaffaa;} }
 .shake { animation: shake 0.4s; }
 @keyframes shake { 0%{transform:translate(0,0);}20%{transform:translate(-5px,0);}40%{transform:translate(5px,0);}60%{transform:translate(-5px,0);}80%{transform:translate(5px,0);}100%{transform:translate(0,0);} }
-#result-banner { display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:64px; font-weight:bold; z-index:20; text-shadow:0 0 15px rgba(0,0,0,0.5); }
+
+/* Баннер с картинкой победы/поражения */
+#result-banner {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+#result-banner img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Анимации атак */
 @keyframes attack-player {0%{transform:translateX(0);}50%{transform:translateX(40px);}100%{transform:translateX(0);}}
 @keyframes attack-enemy {0%{transform:translateX(0);}50%{transform:translateX(-40px);}100%{transform:translateX(0);}}
 .attack { animation: attack-player 0.4s ease; }
 .attack-enemy { animation: attack-enemy 0.4s ease; }
+/* Текст урона */
 .damage-text { position: absolute; color: red; font-weight: bold; font-size: 24px; animation: floatUp 0.8s ease-out forwards; pointer-events: none; }
 @keyframes floatUp {0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-40px);}}
 </style>
 </head>
 <body>
 <h1>Математическая битва</h1>
-<div id="build-number">Сборка 14</div>
+<div id="build-number">Сборка 15</div>
 <div id="characters">
   <div class="character">
     <div>Игрок</div>
@@ -124,15 +146,19 @@ function showDamageText(targetImg){
 }
 
 function showBanner(type){
-  const banner=document.getElementById('result-banner');
-  banner.innerHTML=''; 
-  const img=document.createElement('img');
-  img.src = type==='win'?'win.png':'loose.png';
-  img.style.maxWidth='80%';
-  img.style.maxHeight='80%';
+  const banner = document.getElementById('result-banner');
+  banner.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = type === 'win' ? 'win.png' : 'loose.png';
   banner.appendChild(img);
-  banner.style.display='block';
-  setTimeout(()=>{banner.style.display='none'; resetGame();},1500);
+  banner.style.display = 'flex';
+  
+  function hideBanner() {
+    banner.style.display = 'none';
+    banner.removeEventListener('click', hideBanner);
+    resetGame();
+  }
+  banner.addEventListener('click', hideBanner);
 }
 
 function checkAnswer(){
