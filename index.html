@@ -1,4 +1,4 @@
-<!-- Сборка 13 -->
+<!-- Сборка 14 -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -38,41 +38,17 @@ body {
 .shake { animation: shake 0.4s; }
 @keyframes shake { 0%{transform:translate(0,0);}20%{transform:translate(-5px,0);}40%{transform:translate(5px,0);}60%{transform:translate(-5px,0);}80%{transform:translate(5px,0);}100%{transform:translate(0,0);} }
 #result-banner { display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:64px; font-weight:bold; z-index:20; text-shadow:0 0 15px rgba(0,0,0,0.5); }
-.win { color:#2ecc71; }
-.lose { color:#e74c3c; }
-
-/* Новые анимации атак */
-@keyframes attack-player {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(40px); }
-  100% { transform: translateX(0); }
-}
-@keyframes attack-enemy {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(-40px); }
-  100% { transform: translateX(0); }
-}
+@keyframes attack-player {0%{transform:translateX(0);}50%{transform:translateX(40px);}100%{transform:translateX(0);}}
+@keyframes attack-enemy {0%{transform:translateX(0);}50%{transform:translateX(-40px);}100%{transform:translateX(0);}}
 .attack { animation: attack-player 0.4s ease; }
 .attack-enemy { animation: attack-enemy 0.4s ease; }
-
-/* Текст урона */
-.damage-text {
-  position: absolute;
-  color: red;
-  font-weight: bold;
-  font-size: 24px;
-  animation: floatUp 0.8s ease-out forwards;
-  pointer-events: none;
-}
-@keyframes floatUp {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-40px); }
-}
+.damage-text { position: absolute; color: red; font-weight: bold; font-size: 24px; animation: floatUp 0.8s ease-out forwards; pointer-events: none; }
+@keyframes floatUp {0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-40px);}}
 </style>
 </head>
 <body>
 <h1>Математическая битва</h1>
-<div id="build-number">Сборка 13</div>
+<div id="build-number">Сборка 14</div>
 <div id="characters">
   <div class="character">
     <div>Игрок</div>
@@ -147,12 +123,16 @@ function showDamageText(targetImg){
   setTimeout(()=>dmg.remove(),800);
 }
 
-function showBanner(text,type){
+function showBanner(type){
   const banner=document.getElementById('result-banner');
-  banner.textContent=text;
-  banner.className=type;
+  banner.innerHTML=''; 
+  const img=document.createElement('img');
+  img.src = type==='win'?'win.png':'loose.png';
+  img.style.maxWidth='80%';
+  img.style.maxHeight='80%';
+  banner.appendChild(img);
   banner.style.display='block';
-  setTimeout(()=>{banner.style.display='none';resetGame();},1500);
+  setTimeout(()=>{banner.style.display='none'; resetGame();},1500);
 }
 
 function checkAnswer(){
@@ -164,22 +144,20 @@ function checkAnswer(){
     correct++;
     exampleEl.classList.add('flash-green');
     logRecord+=" ✔️";
-    // Анимация атаки игрока
     playerImg.classList.add('attack');
     setTimeout(()=>playerImg.classList.remove('attack'),400);
     enemyHP--;
     showDamageText(enemyImg);
-    if(enemyHP<=0){showBanner("ПОБЕДА","win"); return;}
+    if(enemyHP<=0){ showBanner('win'); return; }
   }else{
     wrong++;
     exampleEl.classList.add('flash-red');
     logRecord+=" ❌";
-    // Анимация атаки врага
     enemyImg.classList.add('attack-enemy');
     setTimeout(()=>enemyImg.classList.remove('attack-enemy'),400);
     playerHP--;
     showDamageText(playerImg);
-    if(playerHP<=0){showBanner("ПОРАЖЕНИЕ","lose"); return;}
+    if(playerHP<=0){ showBanner('loose'); return; }
   }
   logEntries.push(logRecord);
   updateStats();
